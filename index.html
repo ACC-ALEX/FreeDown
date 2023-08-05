@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FreeDown</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #000000, #000000);
+            font-family: Arial, sans-serif;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 50px;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3063b5;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #progress {
+            width: 300px;
+            height: 20px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background-color: #fff;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        #status {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>FreeDown</h1>
+
+    <form>
+        <label for="download-url">Download Link:</label>
+        <input type="text" id="download-url" name="download-url">
+        <br>
+        <label for="download-path">Download Path:</label>
+        <input type="text" id="download-path" name="download-path">
+        <br>
+        <button type="button" onclick="startDownload()">Download</button>
+    </form>
+
+    <div id="progress">
+        <div id="progress-bar"></div>
+    </div>
+
+    <p id="status"></p>
+
+    <script>
+        function startDownload() {
+            var downloadUrl = document.getElementById('download-url').value;
+            var downloadPath = document.getElementById('download-path').value;
+
+            var progressBar = document.getElementById('progress-bar');
+            var statusText = document.getElementById('status');
+
+            // 创建XMLHttpRequest对象
+            var xhr = new XMLHttpRequest();
+
+            // 监听下载进度事件
+            xhr.addEventListener('progress', function (event) {
+                if (event.lengthComputable) {
+                    var progress = event.loaded / event.total * 100;
+                    progressBar.style.width = progress + '%';
+
+                    var speed = event.loaded / (event.timeStamp / 1000);
+                    statusText.innerHTML = '下载进度：' + progress.toFixed(2) + '%，速度：' + speed.toFixed(2) + ' bytes/s';
+                }
+            });
+
+            // 监听下载完成事件
+            xhr.addEventListener('load', function () {
+                statusText.innerHTML = '下载完成！';
+            });
+
+            // 监听下载错误事件
+            xhr.addEventListener('error', function () {
+                statusText.innerHTML = '下载出错！';
+            });
+
+            // 发起下载请求
+            xhr.open('GET', downloadUrl);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
